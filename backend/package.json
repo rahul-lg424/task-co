@@ -1,0 +1,22 @@
+{
+  "name": "taskco",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "fastify": "^5.2.0",
+    "prisma": "^5.6.1",
+    "tsx": "^4.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.4"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  }
+}

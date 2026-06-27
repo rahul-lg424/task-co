@@ -1,0 +1,37 @@
+# CLAUDE
+
+- Project: taskco.
+- Package manager: pnpm.
+- Stack confirmed from package.json: TypeScript, Fastify, Prisma, Vitest. PostgreSQL is configured as the Prisma datasource. Do not assume Zod, bcrypt, or jose are available unless they are added to package.json.
+- Entry point: src/index.ts starts the Fastify server and exposes GET / with the response envelope { "data": { "status": "ok" } }.
+- Source layout:
+  - src/routes/: HTTP route definitions.
+  - src/services/: business logic and data access.
+  - src/controllers/: request handlers and response shaping.
+  - src/middleware/: request-scoped middleware.
+  - src/schemas/: request and response schemas.
+  - src/validators/: validation helpers and guards.
+  - src/lib/: shared runtime helpers and integrations.
+  - src/prisma/: Prisma schema and related Prisma assets.
+  - src/types/: shared TypeScript types.
+  - src/utils/: general-purpose utility functions.
+  - src/tests/: Vitest test files.
+- Naming conventions:
+  - Files: kebab-case.
+  - Variables: camelCase.
+  - Types: PascalCase.
+  - Components: PascalCase.
+  - Hooks: useSomething.
+  - Constants: UPPER_SNAKE_CASE.
+- API response envelope: every endpoint must return success as { "data": ... } and failure as { "error": { "message": "", "code": "" } }.
+- Ownership rule: every database read and write must be scoped by ownerId; a user can access only their own projects and tasks.
+- Hard rules:
+  - Never store plaintext passwords; always bcrypt-hash.
+  - Never return a password hash in any API response.
+  - Never build features outside the approved scope list.
+- Out of scope:
+  - No task sharing, collaboration, teams, or multi-user projects.
+  - No comments, activity logs, or audit trails.
+  - No file attachments, tags, labels, subtasks, notifications, reminders, recurring tasks, or websockets.
+  - No full-text search, OAuth/SSO, password reset, email verification, roles/admin/RBAC, pagination unless explicitly required, or frontend code in this repo.
+- Keep controllers thin, keep business logic in services, and keep tests in src/tests/.
