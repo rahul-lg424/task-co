@@ -23,11 +23,15 @@ export const authController = {
         data: result,
       });
     } catch (error) {
+      // Duplicate email is reported generically so the response does not confirm
+      // whether an account already exists (avoids user enumeration). Note: full
+      // mitigation would require an email-verification flow; a distinct failure
+      // on otherwise-valid input is still a weak timing/behavior signal.
       if ((error as Error & { code?: string }).code === 'EMAIL_ALREADY_EXISTS') {
-        return reply.code(409).send({
+        return reply.code(400).send({
           error: {
-            message: 'Email already registered',
-            code: 'EMAIL_ALREADY_EXISTS',
+            message: 'Unable to register with the provided information',
+            code: 'REGISTRATION_FAILED',
           },
         });
       }
@@ -70,6 +74,32 @@ export const authController = {
         });
       }
 
+      return reply.code(500).send({
+        error: {
+          message: 'Internal server error',
+          code: 'INTERNAL_SERVER_ERROR',
+        },
+      });
+    }
+  },
+
+  async getMe(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const user = await authService.getUserById(request.user.id);
+
+      if (!user) {
+        return reply.code(404).send({
+          error: {
+            message: 'User not found',
+            code: 'USER_NOT_FOUND',
+          },
+        });
+      }
+
+      return reply.code(200).send({
+        data: user,
+      });
+    } catch {
       return reply.code(500).send({
         error: {
           message: 'Internal server error',

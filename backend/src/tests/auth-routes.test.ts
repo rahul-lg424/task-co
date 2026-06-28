@@ -119,7 +119,7 @@ describe("POST /auth/register", () => {
     expect(await bcrypt.compare(PASSWORD, persisted)).toBe(true);
   });
 
-  it("returns 409 when the email already exists", async () => {
+  it("rejects a duplicate email generically (no user enumeration)", async () => {
     findUnique.mockResolvedValue(makeUser({ passwordHash: realHash }));
 
     const res = await server.inject({
@@ -128,8 +128,10 @@ describe("POST /auth/register", () => {
       payload: validBody,
     });
 
-    expect(res.statusCode).toBe(409);
-    expect(res.json().error.code).toBe("EMAIL_ALREADY_EXISTS");
+    // Generic response: does not confirm the email already exists.
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.code).toBe("REGISTRATION_FAILED");
+    expect(res.payload).not.toContain("already");
     expect(create).not.toHaveBeenCalled();
   });
 

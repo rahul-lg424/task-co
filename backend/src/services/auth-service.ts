@@ -38,6 +38,18 @@ export const authService = {
     };
   },
 
+  async getUserById(id: string) {
+    return prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+      },
+    });
+  },
+
   async loginUser(input: LoginInput) {
     const user = await prisma.user.findUnique({
       where: { email: input.email },
